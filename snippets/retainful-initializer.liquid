@@ -1,0 +1,35 @@
+{% assign retainful_shop_public_key = shop.metafields['retainful'].shop_public_key %}
+{% if customer %}
+	{% assign retainful_api_secret = shop.metafields['retainful'].retainful_api_secret %}
+	{% assign retainful_customer_accepts_marketing = customer.accepts_marketing %}
+	{% assign retainful_customer_email = customer.email %}
+	{% assign retainful_customer_first_name = customer.first_name %}
+	{% assign retainful_customer_id = customer.id %}
+	{% assign retainful_customer_last_name = customer.last_name %}
+	{% assign retainful_customer_orders_count = customer.orders_count %}
+	{% assign retainful_customer_tags = customer.tags | join: "," %}
+	{% assign retainful_customer_total_spent = customer.total_spent %}
+	{% assign retainful_digest = retainful_shop_public_key  
+	    | append: retainful_customer_accepts_marketing
+  	    | append: retainful_customer_email  
+	    | append: retainful_customer_first_name
+  	    | append: retainful_customer_id  
+	    | append: retainful_customer_last_name  
+	    | append: retainful_customer_orders_count 
+ 	    | append: retainful_customer_tags  
+	    | append: retainful_customer_total_spent  
+	    | hmac_sha256: retainful_api_secret %}
+{% endif %}
+<div id="rtl-shopify-init"  data-app-key="{{ retainful_shop_public_key }}"
+	{% if customer %}  
+	data-customer-accepts-marketing="{{ retainful_customer_accepts_marketing | escape }}"  
+	data-customer-email="{{ retainful_customer_email | escape }}" 
+	data-customer-first-name="{{ retainful_customer_first_name | escape }}"  
+	data-customer-id="{{ retainful_customer_id | escape }}"  
+	data-customer-last-name="{{ retainful_customer_last_name | escape }}"  
+	data-customer-orders-count="{{ retainful_customer_orders_count | escape }}"  
+	data-customer-tags="{{ retainful_customer_tags | escape }}"  
+	data-customer-total-spent="{{ retainful_customer_total_spent | escape }}"  
+	data-digest="{{ retainful_digest }}"
+{% endif %}>
+</div>
